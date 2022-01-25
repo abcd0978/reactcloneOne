@@ -21,9 +21,6 @@ mongoose.connect(process.env.MONGO_URL)
     console.log(err)
 })
 
-app.get('/',(req,res)=>{
-    res.send('hello madafaka');
-})
 
 app.get('/api/hello',(req,res)=>{
     res.send('hello')
@@ -66,7 +63,6 @@ app.post("/api/users/login",(req,res)=>{
             userInfo.generateToken((err,user)=>{
                 if(err)
                 {
-                    console.log('에러')
                     return res.status(400).send(err)
                 }
                 console.log(`토큰 ${user.token}`)
