@@ -21,8 +21,6 @@ export default function Auth(SpecificComponent,option,adminRoute=null){
             }else{//로그인은 했으나 어드민이 아님.
                 if(adminRoute && !res.payload.isAdmin){
                     navigate('/');
-                }else{
-                    navigate('/');
                 }
             }
 

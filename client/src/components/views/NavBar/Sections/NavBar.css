@@ -41,7 +41,8 @@
 }
 
 .menu__container .menu_right {
-  float: right;
+  float:right;
+  margin-left: auto;
 }
 
 .menu__mobile-button {
