@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom'
 function RightMenu(props){
 
     const user = useSelector(state=>state.user);
-    const navigate = useNavigate()
 
     const logoutHandler=()=>{
         axios.get(`${USER_SERVER}/logout`)
@@ -24,12 +23,12 @@ function RightMenu(props){
     }
     if (user.userData && !user.userData.isAuth) {
         return (
-          <Menu  mode={props.mode}>
-            <Menu.Item  key="mail">
-              <a href="/login">Signin</a>
+            <Menu mode={props.mode}>
+            <Menu.Item key="up">
+              <a href="/login">signin</a>
             </Menu.Item>
-            <Menu.Item key="app">
-              <a href="/register">Signup</a>
+            <Menu.Item key="in"> 
+              <a href="/register">signup</a>
             </Menu.Item>
           </Menu>
         )

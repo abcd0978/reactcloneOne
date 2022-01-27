@@ -1,4 +1,4 @@
-@import '~antd/dist/antd.css';
+@import '~antd/dist/antd.min.css';
 
 .menu {
   padding: 0 20px;
@@ -19,9 +19,7 @@
   padding: 19px 20px;
 }
 
-.menu__container .ant-menu-overflow-item {
-  padding: 0px 5px;
-}
+
 
 .menu__container .ant-menu-submenu-title {
   padding: 10px 20px;
@@ -37,11 +35,10 @@
 }
 
 .menu__container .menu_left {
-  float: left;
+  float:left;
 }
 
 .menu__container .menu_right {
-  float:right;
   margin-left: auto;
 }
 
@@ -69,7 +66,7 @@
   }
 
   .menu_left,
-  .menu_rigth {
+  .menu_right {
     display: none;
   }
 

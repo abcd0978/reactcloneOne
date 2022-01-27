@@ -2,7 +2,7 @@ import React,{useState} from 'react';
 import {Typography, Button, Form, message, Input} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import Dropzone from 'react-dropzone'
-import {PlusOutlined} from '@ant-design/icons'
+import {AlignRightOutlined, PlusOutlined} from '@ant-design/icons'
 import axios from 'axios';
 const {Title} = Typography;
 
@@ -43,12 +43,23 @@ function VideoUploadPage() {
 	}
 
 	const onDropfunc = (files)=>{
-		let formData = new FormData;
+		let formData = new FormData();
 		const config={
-			header:{'content-type':'multipart/form-data'}
+			header:{'Content-type':'multipart/form-data'}
 		}
+		
 		formData.append('file',files[0])
-		console.log(files[0])
+		axios.post('/api/video/uploadfiles',formData,config)
+		.then(res=>{
+			if(res)
+			{
+				console.log(res);
+			}
+			else
+			{
+				alert('업로드 실패')
+			}
+		})
 	}
 
 	return( 
