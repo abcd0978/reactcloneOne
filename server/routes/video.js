@@ -4,7 +4,8 @@ const {User} = require('../models/User');
 const {auth} = require('../middlewares/auth');
 const multer = require('multer');
 const path = require('path');
-const { send } = require('process');
+const ffmpeg = require('fluent-ffmpeg');
+
 //multer 설정
 
 const storage = multer.diskStorage({
@@ -37,9 +38,44 @@ router.post("/uploadfiles",(req,res)=>{
         if(err){
             return res.json({success:false, err});
         }else{
-            return res.json({success:true, url: res.req.file.path, fileName: res.req.file.filename});
+            return res.json({from:'multer',success:true, url: res.req.file.path, fileName: res.req.file.filename});
         }
     } )
 })
+router.post("/thumbnail",(req,res)=>{
+    
 
+    //클라이언트에서 올정보:
+    /*
+    {
+        url:"파일저장경로"
+        fileName:"파일 이름" 
+    }
+    */
+    let fileDuration="";
+    let filePath;
+
+    ffmpeg.ffprobe(req.body.url, function(err,metadata){
+        fileDuration = metadata.format.duration;
+    });//파일의 재생시간을 얻어온다.
+
+    console.log("만드는중")
+    ffmpeg(req.body.url)
+    .on('filenames',function(filenames){
+        filePath = "uploads/thumbnails/"+filenames[0];
+    })//저장할 파일이름들
+    .on('end',()=>{
+        return res.json({from:'ffmpeg',success:true, url: filePath, fileDuration:fileDuration});
+    })//끝났으면 json을 보낸다. (성공여부, 파일 경로, 파일이름, 파일 재생시간)
+    .on('error',(err)=>{
+        return res.json({success:false,err});
+    })
+    .screenshots({//스크린샷 설정
+        count:3,
+        folder:'uploads/thumbnails/',
+        size:'320x240',
+        filename:'thumbnail-%b.png'
+    })
+
+})
 module.exports = router;

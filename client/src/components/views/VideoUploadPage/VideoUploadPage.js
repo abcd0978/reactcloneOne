@@ -23,8 +23,13 @@ function VideoUploadPage() {
 
 	const [VideoTitle,setVideoTitle] = useState("")
 	const [Description,setDescription] = useState("")
-	const [Private, setPrivate] = useState("")
+	const [Private, setPrivate] = useState("Public")
 	const [Category, setCategory] = useState("Film & Animation")
+
+	const [FilePath, setFilePath] = useState("");
+	const [Duration, setDuration] = useState("");
+	const [ThumbnailPath, setThumbnailPath] = useState("");
+
 
 	const titleOnChange = (e)=>{
 		setVideoTitle(e.currentTarget.value)
@@ -41,6 +46,8 @@ function VideoUploadPage() {
 	const categoryOnChange=(e)=>{
 		setCategory(e.currentTarget.value)
 	}
+	
+
 
 	const onDropfunc = (files)=>{
 		let formData = new FormData();
@@ -53,7 +60,21 @@ function VideoUploadPage() {
 		.then(res=>{
 			if(res)
 			{
-				console.log(res);
+				let variable = {
+					url:res.data.url,
+					fileName:res.data.fileName
+				}
+				setFilePath(res.data.url);
+				axios.post('/api/video/thumbnail',variable)
+				.then(res=>{
+					if(res){
+						setThumbnailPath(res.data.url);
+						setDuration(res.data.fileDuration);
+
+					}else{
+						alert('썸네일 생성에 실패했습니다.')
+					}
+				})
 			}
 			else
 			{
@@ -83,9 +104,10 @@ function VideoUploadPage() {
 				)}
 				</Dropzone>
 				{/*썸네일*/}
+				{ThumbnailPath &&
 				<div>
-					<img src alt />
-				</div>
+					<img src={`http://localhost:3100/${ThumbnailPath}`} alt="thumbnail" />
+				</div> }
 			</div>
 			<br/>
 			<br/>
@@ -110,7 +132,8 @@ function VideoUploadPage() {
 			</select>
 			<br/>
 			<br/>
-			<select onChange={categoryOnChange}>
+			<select onChange={categoryOnChange}
+			value={Private}>
 				{MapCategory.map((item,index)=>(
 					<option key={index} value={item.value}>{item.label}</option>
 				))}

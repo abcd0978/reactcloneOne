@@ -6,15 +6,19 @@ const {User} = require('./models/User');
 const {auth} = require('./middlewares/auth');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const path = require('path')
 
 const userRouter = require('./routes/user');
 const videoRouter = require('./routes/video');
+
 
 dotenv.config();
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json())
 app.use(cookieParser())
+console.log(path.join(__dirname,'../uploads'))
+app.use('/uploads',express.static(path.join(__dirname,'../uploads')));
 
 const port = process.env.PORT
 mongoose.connect(process.env.MONGO_URL)
