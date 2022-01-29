@@ -41,6 +41,19 @@ router.post("/uploadfiles",(req,res)=>{
     } )
 })
 
+router.get("/getVideos",(req,res)=>{
+    //비디오 가져오기
+    Video.find()
+    .populate('writer')
+    .exec((err,videos)=>{//videos:쿼리로 찾은 결과json, 
+        if(err)
+            return res.status(400).send(err);
+        else
+            return res.status(200).json({success:true,videos});
+        //성공시 결과물을 보낸다.
+    })
+})
+
 router.post("/uploadVideo",(req,res)=>{
     //비디오 정보 저장
     const video = new Video(req.body)
