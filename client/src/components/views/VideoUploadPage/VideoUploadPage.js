@@ -55,8 +55,9 @@ function VideoUploadPage() {
 		formData.append('file',files[0])
 		axios.post('/api/video/uploadfiles',formData,config)//비디오 보냄
 		.then(res=>{
-			if(res)
+			if(res.data.success)
 			{
+				console.log(res.data);
 				let variable = {
 					url:res.data.url,
 					fileName:res.data.fileName
@@ -75,7 +76,8 @@ function VideoUploadPage() {
 			}
 			else
 			{
-				alert('업로드 실패')
+				console.log(res.data)
+				alert(res.data.msg)
 			}
 		})
 	}
