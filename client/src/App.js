@@ -11,6 +11,7 @@ import LoginPage from "./components/views/LoginPage/LoginPage";
 import NavBar from "./components/views/NavBar/NavBar";
 import RegisterPage from "./components/views/RegisterPage/RegisterPage";
 import VideoUploadPage from "./components/views/VideoUploadPage/VideoUploadPage";
+import VideoDetailPage from "./components/views/VideoDetailPage/VideoDetailPage";
 import Auth from "./hoc/auth";
 import { Suspense } from "react";
 import Spinner from "./components/views/Spinner/Spinner";
@@ -28,6 +29,7 @@ function App() {
         <Route exact path="/login" element={ Auth(LoginPage, false)}/>
         <Route exact path="/register" element={ Auth( RegisterPage, false)}/>
         <Route exact path="/video/upload" element={ Auth(VideoUploadPage,true)}/>
+        <Route exact path="/video/:videoId" element={ Auth(VideoDetailPage, null)}/>
 
         </Routes>
       </div>
