@@ -4,10 +4,11 @@ const multer = require('multer');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 const {Video} = require('../models/Video');
+const { gzip } = require('zlib');
 
 //multer 설정
 
-const storage = multer.diskStorage({
+const storagefunc = multer.diskStorage({
     destination:(req,file,cb)=>{
         //루트 디렉토리의 uploads폴더안에 저장
         cb(null,'uploads/');
@@ -16,33 +17,55 @@ const storage = multer.diskStorage({
         //현재시각과 파일이름을 합한형태로 저장
         cb(null,`${Date.now()}_${file.originalname}`);
     },
-    //mp4파일만 올릴수 있음
-    fileFilter:(req,file,cb)=>{
-        const ext = path.extname(file.originalname);
-        if(ext !== '.mp4')
-        {
-            return cb(res.state(400).end('only mp4 files can be uploaded'));
-        }
-        cb(null,true)
+
+})
+const fileFilter = (req, file, cb) => {
+
+    // mime type 체크하여 원하는 타입만 필터링
+   
+    if (file.mimetype == 'video/mp4' ) {
+   
+    cb(null, true);
+   
+    } else {
+   
+    cb({msg:'mp4 파일만 업로드 가능합니다.'}, false);
+   
     }
-})
-
+   }
 //한번의 하나의 파일만 올릴수 있음
-const upload = multer({storage:storage}).single("file");
+const upload = multer({ storage: storagefunc, fileFilter: fileFilter }).single("file")
 
-router.post("/uploadfiles",(req,res)=>{
-    //비디오 파일 저장
-    upload(req,res,(err) =>{
-        if(err){
-            return res.json({success:false, err});
-        }else{
-            return res.json({from:'multer',success:true, url: res.req.file.path, fileName: res.req.file.filename});
-        }
-    } )
-})
+
+
+//=================================
+
+// Video
+
+//=================================
+
+router.post("/uploadfiles", (req, res) => {
+
+ upload(req, res, err => {
+
+ if (err) {
+
+ return res.json({ success: false, err })
+
+ }
+
+ else{
+
+ return res.json({ success: true, url: res.req.file.path, filePath: res.req.file.path, fileName: res.req.file.filename })
+
+ }
+
+ })
+
+});
 
 router.get("/getVideos",(req,res)=>{
-    //비디오 가져오기
+    //랜딩페이지에서 보여질 비디오정보들 가져오기
     Video.find()
     .populate('writer')
     .exec((err,videos)=>{//videos:쿼리로 찾은 결과json, 
@@ -52,6 +75,22 @@ router.get("/getVideos",(req,res)=>{
             return res.status(200).json({success:true,videos});
         //성공시 결과물을 보낸다.
     })
+})
+
+router.post("/getVideoDetail",(req,res)=>{
+    //하나의 비디오의 디테일을 전송한다. 
+
+    const videoId = req.body.videoId
+    Video.findOne({"_id":req.body.videoId})
+    .populate("writer")
+    .exec((err,videoDetail)=>{
+        if(err){
+            return res.status(400).json({success:false,err})
+        }else{
+            return res.status(200).json({success:true,videoDetail});
+        }
+    })
+    
 })
 
 router.post("/uploadVideo",(req,res)=>{
@@ -67,7 +106,6 @@ router.post("/uploadVideo",(req,res)=>{
 
 router.post("/thumbnail",(req,res)=>{
     
-
     //클라이언트에서 올정보:
     /*
     {
