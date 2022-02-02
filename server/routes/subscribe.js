@@ -1,0 +1,57 @@
+const express = require('express');
+const router = express.Router();
+const {Subscriber} = require('../models/Subscriber')
+
+router.post("/subnum", (req, res) => {
+
+
+    Subscriber.find({userTo:req.body.userTo})
+    .exec((err,subscribe)=>{
+        if(err){
+            return res.status(400).send(err);
+        }else{
+            return res.status(200).json({success:true,subscribeNumber:subscribe.length})
+        }
+    })
+
+});
+
+router.post("/issubed", (req, res) => {
+    Subscriber.find({userTo:req.body.userTo, userFrom:req.body.userFrom})
+    .exec((err,subscribe)=>{
+        if(err){
+            return res.status(400).send(err);
+        }else{
+            let result = false;
+            if(subscribe.length>0){
+                result = true;
+            }
+            return res.status(200).json({success:true,subscribed:result})
+        }
+    })
+});
+
+router.post("/unsub", (req, res) => {
+    Subscriber.findOneAndDelete({userTo:req.body.userTo, userFrom:req.body.userFrom})
+    .exec((err,doc)=>{
+        if(err){
+            return res.status(400).send(err)
+        }else{
+            return res.status(200).json({success:true, doc})
+        }
+    })
+});
+
+router.post("/sub", (req, res) => {
+
+    const subscribe = new Subscriber(req.body)
+
+    subscribe.save((err,doc)=>{
+        if(err){
+            return res.status(400).send(err)
+        }else{
+            return res.status(200).json({success:true, doc})
+        }
+    })
+});
+module.exports = router;
