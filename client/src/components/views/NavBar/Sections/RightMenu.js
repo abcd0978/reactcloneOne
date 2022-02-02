@@ -16,6 +16,7 @@ function RightMenu(props){
         .then(res=>{
             if(res.status===200){
                 window.location.replace("/")
+                window.localStorage.setItem('userId',"");
             }else{
                 alert('logout failed')
             }
