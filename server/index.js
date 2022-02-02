@@ -10,7 +10,7 @@ const path = require('path')
 
 const userRouter = require('./routes/user');
 const videoRouter = require('./routes/video');
-
+const subscribeRouter = require('./routes/subscribe');
 
 dotenv.config();
 
@@ -31,5 +31,7 @@ mongoose.connect(process.env.MONGO_URL)
 
 app.use('/api/users',userRouter)
 app.use('/api/video',videoRouter)
+app.use('/api/subscribe',subscribeRouter);
+
 
 app.listen(port,()=>console.log(`Example app listening on port ${port}`));
