@@ -4,7 +4,7 @@ const saltRounds = 10;
 const jwt = require('jsonwebtoken');
 
 
-const userSchema = mongoose.Schema({
+const UserSchema = mongoose.Schema({
     name:{
         type:String,
         maxlength:50
@@ -32,7 +32,7 @@ const userSchema = mongoose.Schema({
     },
 })
 
-userSchema.pre('save',function(next){//save함수 하기전에하는 함수
+UserSchema.pre('save',function(next){//save함수 하기전에하는 함수
     let user = this;//삽입하려고 하는 유저의 password
 
     if(user.isModified('password'))
@@ -54,14 +54,14 @@ userSchema.pre('save',function(next){//save함수 하기전에하는 함수
     }
 
 })
-userSchema.methods.comparePassword = function(plainPassword,cb){
+UserSchema.methods.comparePassword = function(plainPassword,cb){
     bcrypt.compare(plainPassword, this.password, function(err,isMatch){
         if(err)
             return cb(err)
         cb(null,isMatch)
     })
 }
-userSchema.methods.generateToken = function(cb){
+UserSchema.methods.generateToken = function(cb){
     //jwt를 이용해서 토큰 생성
     let user = this;
     let token = jwt.sign(user._id.toString(),'secretToken')
@@ -78,7 +78,7 @@ userSchema.methods.generateToken = function(cb){
     })
 }
 
-userSchema.statics.findByToken = function(token,cb){
+UserSchema.statics.findByToken = function(token,cb){
     let user = this;
     jwt.verify(token,'secretToken',(err,decoded)=>{
         user.findOne({"_id":decoded, "token":token},(err,user)=>{
@@ -88,5 +88,5 @@ userSchema.statics.findByToken = function(token,cb){
         })
     })
 }
-const User = mongoose.model('User',userSchema)
+const User = mongoose.model('User',UserSchema)
 module.exports = {User}
