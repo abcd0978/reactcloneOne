@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import {Row, Col, List, Avatar,Button} from 'antd'
 import SideVideo from './Sections/SideVideo';
 import Subscribe from './Sections/SubscribeButton';
+import Comment from './Sections/Comment';
 import axios from 'axios';
 
 function VideoDetailPage() {
@@ -11,22 +12,38 @@ function VideoDetailPage() {
     const videoId = {videoId:location.pathname.split('/')[2]}
 
     const [VideoDetail,setVideoDetail] = useState([])
+    const [Comments, setComments] = useState([])
+
+    const MyRefresh = (newComment) =>{
+        setComments(Comments.concat(newComment))
+    }
 
     useEffect(()=>{
         axios.post('/api/video/getVideoDetail',videoId)
         .then(res=>{
             if(res.data.success){
-                console.log(res.data.videoDetail.writer)
                 setVideoDetail(res.data.videoDetail)
             }else{
-                alert('fuckypu')
+                alert('error while getting videoDetail')
             }
         })
+
+        axios.post('/api/comment/getComments',videoId)
+        .then(res=>{
+            if(res.data.success){
+                setComments(res.data.comments);
+            }else{
+                alert('error while getting comments')
+            }
+        })
+
     },[])
 
+    
 
     if(VideoDetail.writer)
     {
+        const isHim = VideoDetail.writer._id!==localStorage.getItem('userId')
         return (
             <Row gutter={[16, 16]}>
 
@@ -46,9 +63,10 @@ function VideoDetailPage() {
                             src={`http://localhost:3100/${VideoDetail.filePath}`}
                             controls/>
     
+                         
                         <List.Item 
                         //비디오 업로더의 userId를 property로 넣어준다.
-                        actions={[<Subscribe userTo={VideoDetail.writer._id} userFrom={localStorage.getItem('userId')}/>]}
+                        actions={ isHim && [<Subscribe userTo={VideoDetail.writer._id} userFrom={localStorage.getItem('userId')}/>] }
                         >
                             <List.Item.Meta 
                              avatar={<Avatar src={VideoDetail.writer.image}/>}
@@ -56,7 +74,11 @@ function VideoDetailPage() {
                              description={VideoDetail.description}                                 
                             />
                         </List.Item>
+                    
                         {/*comments */}
+
+                        <Comment MyRefresh={MyRefresh} commentList={Comments} videoId={videoId.videoId}/>
+
                     </div>
                 </Col>
 
