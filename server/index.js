@@ -11,7 +11,8 @@ const path = require('path')
 const userRouter = require('./routes/user');
 const videoRouter = require('./routes/video');
 const subscribeRouter = require('./routes/subscribe');
-const commentRouter = require('./routes/comment')
+const commentRouter = require('./routes/comment');
+const likeRouter = require('./routes/like')
 
 dotenv.config();
 
@@ -34,6 +35,6 @@ app.use('/api/users',userRouter);
 app.use('/api/video',videoRouter);
 app.use('/api/subscribe',subscribeRouter);
 app.use('/api/comment',commentRouter);
-
+app.use('/api/like',likeRouter);
 
 app.listen(port,()=>console.log(`Example app listening on port ${port}`));

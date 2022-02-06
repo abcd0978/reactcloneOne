@@ -25,7 +25,6 @@ useEffect(()=>{
     axios.post('/api/subscribe/issubed',visitorData)
     .then(res=>{
         if(res.data.success){
-            console.log(res.data)
             setSubscribed(res.data.subscribed)
         }else{
             alert('error while getting sub info')
@@ -87,7 +86,8 @@ return (
                 fontSize: '1rem',
                 textTransform: 'uppercase',
                 border: '0',
-                outline: '0'
+                outline: '0',
+                cursor:'pointer'
             }}
             onClick={onSubscribe}>
             {SubscribeNumber} {Subscribed ? "Subscribed" : "Subscribe"}</button>

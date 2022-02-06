@@ -4,6 +4,7 @@ import {Row, Col, List, Avatar,Button} from 'antd'
 import SideVideo from './Sections/SideVideo';
 import Subscribe from './Sections/SubscribeButton';
 import Comment from './Sections/Comment';
+import LikeDislike from './Sections/LikeDislike';
 import axios from 'axios';
 
 function VideoDetailPage() {
@@ -43,7 +44,9 @@ function VideoDetailPage() {
 
     if(VideoDetail.writer)
     {
+        //자신이 자신의 영상에 들어갔는가?
         const isHim = VideoDetail.writer._id!==localStorage.getItem('userId')
+        const SubscribeButton = (isHim && <Subscribe userTo={VideoDetail.writer._id} userFrom={localStorage.getItem('userId')}/>)
         return (
             <Row gutter={[16, 16]}>
 
@@ -63,10 +66,10 @@ function VideoDetailPage() {
                             src={`http://localhost:3100/${VideoDetail.filePath}`}
                             controls/>
     
-                         
+                        
                         <List.Item 
                         //비디오 업로더의 userId를 property로 넣어준다.
-                        actions={ isHim && [<Subscribe userTo={VideoDetail.writer._id} userFrom={localStorage.getItem('userId')}/>] }
+                        actions={[<LikeDislike videoId={videoId.videoId} userId={window.localStorage.getItem('userId')}/>,SubscribeButton]}
                         >
                             <List.Item.Meta 
                              avatar={<Avatar src={VideoDetail.writer.image}/>}
